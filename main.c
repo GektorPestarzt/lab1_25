@@ -1,12 +1,21 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "str_library.h"
+#include "menu.h"
 
 int main()
 {
-    struct StringInfo *stringInfo = Create(sizeof(char));
-    struct String *str = From("123", 3, stringInfo);
+    int status = FIRST;
+    while(status)
+    {
+        menu(&status);
 
-    printf("%s\n", GetString(str));
+        if(status == EXIT)
+            return 0;
+
+        //CheckError
+    }
 
     return 0;
 }

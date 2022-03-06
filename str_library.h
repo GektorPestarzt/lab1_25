@@ -1,15 +1,14 @@
-#include <string.h>
-#include <stdlib.h>
-
 struct StringInfo;
 struct String;
 
-struct StringInfo *Create(size_t);
-struct String *From(char *, size_t, struct StringInfo *);
+struct StringInfo *CreateType(size_t, void *, void *, void *);
+struct String *CreateString(void *, struct StringInfo *);
 
 size_t GetLength(struct String *);
-char *GetString(struct String *);
+void *GetString(struct String *);
+int PrintString(struct String *);
+void RemoveString(struct String *);
 
-struct String *Concat(struct String *s1, struct String *s2);
-struct String *SubString(struct String str, size_t left, size_t right);
-struct String *StringSplit(struct String str, char separator);
+struct String *Concat(struct String *, struct String *);
+struct String *SubString(struct String *, size_t, size_t);
+struct String *StringTok(struct String *, void *);
