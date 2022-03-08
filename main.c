@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "str_library.h"
+#include "error_treat.h"
 #include "menu.h"
 
 int main()
@@ -14,7 +15,7 @@ int main()
         if(status == EXIT)
             return 0;
 
-        //CheckError
+        ErrorPrint(status);
     }
 
     return 0;

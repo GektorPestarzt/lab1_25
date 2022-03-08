@@ -7,6 +7,52 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
+char *SpaceDel(char *str)
+{
+        int i, j, b, N = strlen(str);
+        char *new_ = NULL;
+
+        for(i = 0; i < N; i++) if(str[i] != ' ') break;
+        for(j = N - 1; j >= 1; j--) if(str[j] != ' ') break;
+
+        if(j < i)
+        {
+                free(new_);
+                return NULL;
+        }
+
+        new_ = (char *) calloc(j - i + 2, sizeof(char));
+
+        for(b = 0; i <= j; i++)
+        {
+                new_[b] = str[i];
+                b++;
+        }
+
+        free(str);
+
+        return new_;
+}
+
+int CorrectInput()
+{
+        char *temp = NULL;
+
+        temp = SpaceDel(readline(NULL));
+
+        if(temp == "" || temp == NULL || strlen(temp) > 1)
+        {
+                free(temp);
+                return -1;
+        }
+
+        int n = *temp - '0';
+
+        free(temp);
+        return n;
+}
+
+
 int CharCompar(void *s1, void *s2)
 {
     char *is1 = (char *)s1;
@@ -25,8 +71,8 @@ void Print(void *str)
 
 void menu(int *status)
 {
-    static void *str1;
-    static void *str2;
+    static struct String *str1;
+    static struct String *str2;
     static struct StringInfo *charInfo;
     static char *strEnd;
     static char *separator;
@@ -51,21 +97,15 @@ void menu(int *status)
     printf("5. Get token from string\n");
     printf("6. Exit\n");
 
-    int choose;
-    scanf("%d", &choose);
-
-    switch(choose)
+    switch(CorrectInput())
     {
         case CREATE:
         {
-            printf("Choose the sting you want to enter:\n");
+            printf("Choose the string you want to enter:\n");
             printf("1. First\n");
             printf("2. Second\n");
 
-            int strNumber;
-            scanf("%d", &strNumber);
-
-            switch(strNumber)
+            switch(CorrectInput())
             {
                 case 1:
 
@@ -145,9 +185,55 @@ void menu(int *status)
             *status = SUCCES;
             return;
         }
-        
+
         case CONCAT:
+        {
+            struct String *strBuffer;
+
+            strBuffer = ConCat(str1, str2);
+
+            if(!strBuffer)
+            {
+                *status = EMPTY_STRING;
+                return;
+            }
+
+            if(str1)
+            {
+                printf("Previus string 1 will be removed\n");
+                RemoveString(str1);
+            }
+
+            str1 = strBuffer;
+
+            *status = SUCCES;
+            return;
+        }
+
         case TOKEN:
+        {
+            struct String *strBuffer;
+
+            strBuffer = StringTok(str1, separator);
+
+            if(!strBuffer)
+            {
+                *status = EMPTY_STRING;
+                return;
+            }
+
+            if(str2)
+            {
+                printf("Previus string 2 will be removed\n");
+                RemoveString(str2);
+            }
+
+            str2 = strBuffer;
+
+            *status = SUCCES;
+            return;
+        }
+
         case EXIT:
 
             if(str1)
@@ -155,6 +241,10 @@ void menu(int *status)
                 
             if(str2)
                 RemoveString(str2);
+
+            free(strEnd);
+            free(separator);
+            free(charInfo);
             
             *status = EXIT_STATUS;
             return;
