@@ -92,9 +92,9 @@ void menu(int *status)
 
     printf("1. Enter a string\n");
     printf("2. Print strings\n");
-    printf("3. Get substring\n");
+    printf("3. Get substring from first string\n");
     printf("4. Concatenate strings\n");
-    printf("5. Get token from string\n");
+    printf("5. Get token from first string\n");
     printf("6. Exit\n");
 
     switch(CorrectInput())
@@ -156,6 +156,12 @@ void menu(int *status)
 
         case SUBSTRING:
         {
+            if(!GetDataLength(str1))
+            {
+                *status = EMPTY_STRING;
+                return;
+            }
+
             int left;
             int right;
             struct String *strBuffer;
