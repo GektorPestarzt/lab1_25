@@ -4,7 +4,7 @@ enum EnumMenuStatus
     EXIT_STATUS = 0,
     FIRST = 2,
     INVAL_INPUT = -1,
-    ERR_SIZE = -4,
+    EMPTY_STRING = -3,
     UNKNOWN = -2,
 };
 
