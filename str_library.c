@@ -204,3 +204,56 @@ struct String *StringTok(struct String *str, void *separator)
         count++;
     }
 }
+
+struct String *Copy(struct String *str)
+{
+    if(!str)
+        return NULL;
+
+    struct String *newStr = malloc(sizeof(struct String));
+    newStr->string = malloc((str->length + 1) * str->stringInfo->size);
+
+    newStr->stringInfo = str->stringInfo;
+    newStr->length = str->length;
+
+    memcpy(newStr->string, str->string, (str->length + 1) * str->stringInfo->size);
+
+    return newStr;
+}
+
+struct Struct *Split(struct String *str)
+{
+    
+}
+
+int FindSubStr(struct String *str, struct String *subStr)
+{
+    if(!str || !subStr)
+        return -2;
+
+    if(subStr->length == 0 || str->length == 0)
+        return -2;
+
+    if(!str->string || !subStr->string)
+        return -2;
+
+    int i, j, check = 1;
+    for(i = 0; i < str->length; ++i)
+    {
+        for(j = 0; j < subStr->length; ++j)
+        {
+            if(!str->stringInfo->Compar(str->string + (i + j) * str->stringInfo->size, subStr->string + j * str->stringInfo->size))
+            {
+                check = 0;
+                break;
+            }
+        }
+
+        if(check)
+            return i;
+
+        check = 1;
+    }
+
+    return -1;
+} 

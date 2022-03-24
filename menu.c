@@ -7,6 +7,9 @@
 #include <stdio.h>
 #include <readline/readline.h>
 
+int CopyStruct(struct String *, struct String *, int);
+void NewSepatator(char *separator);
+
 char *SpaceDel(char *str)
 {
         int i, j, b, N = strlen(str);
@@ -95,7 +98,10 @@ void menu(int *status)
     printf("3. Get substring from first string\n");
     printf("4. Concatenate strings\n");
     printf("5. Get token from first string\n");
-    printf("6. Exit\n");
+    printf("6. Copy first string\n");
+    printf("7. Split first string and print tokens\n");
+    printf("8. Find substring in first string\n");
+    printf("0. Exit\n");
 
     switch(CorrectInput())
     {
@@ -153,7 +159,6 @@ void menu(int *status)
             *status = SUCCES;
             return;
 
-
         case SUBSTRING:
         {
             if(!GetDataLength(str1))
@@ -174,19 +179,11 @@ void menu(int *status)
 
             strBuffer = SubString(str1, left, right);
 
-            if(!strBuffer)
+            if(!CopyStruct(strBuffer, str2, 2))
             {
                 *status = INVAL_INPUT;
                 return;
             }
-
-            if(str2)
-            {
-                printf("Previus string 2 will be removed\n");
-                RemoveString(str2);
-            }
-
-            str2 = strBuffer;
 
             *status = SUCCES;
             return;
@@ -198,19 +195,11 @@ void menu(int *status)
 
             strBuffer = ConCat(str1, str2);
 
-            if(!strBuffer)
+            if(!CopyStruct(strBuffer, str1, 1))
             {
                 *status = EMPTY_STRING;
                 return;
             }
-
-            if(str1)
-            {
-                printf("Previus string 1 will be removed\n");
-                RemoveString(str1);
-            }
-
-            str1 = strBuffer;
 
             *status = SUCCES;
             return;
@@ -222,19 +211,52 @@ void menu(int *status)
 
             strBuffer = StringTok(str1, separator);
 
-            if(!strBuffer)
+            if(!CopyStruct(strBuffer, str2, 2))
             {
                 *status = EMPTY_STRING;
                 return;
             }
 
-            if(str2)
+            *status = SUCCES;
+            return;
+        }
+
+        case COPY:
+        {
+            struct String *strBuffer;
+
+            strBuffer = Copy(str1);
+
+            if(!CopyStruct(strBuffer, str2, 2))
             {
-                printf("Previus string 2 will be removed\n");
-                RemoveString(str2);
+                *status = EMPTY_STRING;
+                return;
             }
 
-            str2 = strBuffer;
+            *status = SUCCES;
+            return;
+        }
+
+        case SPLIT:
+        {
+
+        }
+
+        case FINDSUBSTR:
+        {
+            int tmp = FindSubStr(str1, str2);
+
+            if(tmp == -2)
+            {
+                *status = EMPTY_STRING;
+                return;
+            }
+
+            else if(tmp == -1)
+                printf("There is not this substring\n");
+
+            else
+                printf("The index of substring - %d\n", tmp + 1);
 
             *status = SUCCES;
             return;
@@ -261,3 +283,32 @@ void menu(int *status)
             return;
     }
 }
+
+int CopyStruct(struct String *str1, struct String *str2, int numberString)
+{
+    if(!str2)
+        return 0;
+
+    if(str1)
+    {
+        printf("Previus string %d will be removed\n", numberString);
+        RemoveString(str1);
+    }
+
+    str2 = str1;
+
+    return 1;
+}
+/*
+void NewSepatator(char *separator)
+{
+    printf("Input separator (only the first character counts)\n");
+
+    char newSeparator = readline(NULL);
+
+    if(newSeparator == '/0')
+        return;
+
+    separator[0] = newSeparator; 
+}
+*/
