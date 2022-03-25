@@ -20,7 +20,7 @@ struct String
     size_t length;
 };
 
-struct StringInfo *CreateType(size_t size, void *strEnd, void* (*Compar)(void *, void *), void* (*Print)(void *))
+struct StringInfo *CreateType(size_t size, void *strEnd, void *(*Compar)(void *, void *), void* (*Print)(void *))
 {
     struct StringInfo *stringInfo = (struct StringInfo *)malloc(sizeof(struct StringInfo));
 
@@ -221,9 +221,30 @@ struct String *Copy(struct String *str)
     return newStr;
 }
 
-struct Struct *Split(struct String *str)
+struct String **Split(struct String *str, void *separator)
 {
-    
+    if(!str || !str->string || !separator) return NULL;
+
+    struct String **tokens = (struct String **)calloc(sizeof(struct String *), 100);
+
+    int i, point = 0, n = 0;
+    for(i = 0; i <= str->length; i++)
+    {
+        if(str->stringInfo->Compar(str->string + i * str->stringInfo->size, separator) || i == str->length)
+        {
+            void *stringToken = malloc(str->stringInfo->size * (i - point + 1));
+
+            memcpy(stringToken, str->string + point, (i - point) * str->stringInfo->size);
+            memcpy(stringToken + i - point, str->stringInfo->strEnd, str->stringInfo->size);
+
+            point = i + 1;
+
+            tokens[n] = CreateString(stringToken, str->stringInfo);
+            n++;
+        }
+    }
+
+    return tokens;
 }
 
 int FindSubStr(struct String *str, struct String *subStr)

@@ -61,8 +61,8 @@ int CharCompar(void *s1, void *s2)
     char *is1 = (char *)s1;
     char *is2 = (char *)s2;
 
-    if(is1[0] == is2[0]) return TRUE;
-    return FALSE;
+    if(is1[0] == is2[0]) return 1;
+    return 0;
 }
 
 void Print(void *str)
@@ -239,7 +239,27 @@ void menu(int *status)
 
         case SPLIT:
         {
+            NewSepatator(separator);
 
+            struct String **tokens = Split(str1, separator);
+
+            if(!tokens)
+            {
+                *status = EMPTY_STRING;
+                return;
+            }
+
+            int i;
+            for(i = 0; tokens[i]; ++i)
+            {
+                PrintString(tokens[i]);
+                RemoveString(tokens[i]);
+            }
+            
+            free(tokens);
+
+            *status = SUCCES;
+            return;
         }
 
         case FINDSUBSTR:
@@ -299,16 +319,16 @@ int CopyStruct(struct String *str1, struct String *str2, int numberString)
 
     return 1;
 }
-/*
+
 void NewSepatator(char *separator)
 {
     printf("Input separator (only the first character counts)\n");
 
-    char newSeparator = readline(NULL);
+    char *newSeparator = readline(NULL);
 
-    if(newSeparator == '/0')
+    if(newSeparator[0] == '\0')
         return;
 
-    separator[0] = newSeparator; 
+    separator[0] = newSeparator[0]; 
+    free(newSeparator);
 }
-*/
