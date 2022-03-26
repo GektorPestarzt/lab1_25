@@ -20,7 +20,7 @@ struct String
     size_t length;
 };
 
-struct StringInfo *CreateType(size_t size, void *strEnd, void* (*Compar)(void *, void *), void* (*Print)(void *))
+struct StringInfo *CreateType(size_t size, void *strEnd, void *(*Compar)(void *, void *), void* (*Print)(void *))
 {
     struct StringInfo *stringInfo = (struct StringInfo *)malloc(sizeof(struct StringInfo));
 
@@ -204,3 +204,77 @@ struct String *StringTok(struct String *str, void *separator)
         count++;
     }
 }
+
+struct String *Copy(struct String *str)
+{
+    if(!str)
+        return NULL;
+
+    struct String *newStr = malloc(sizeof(struct String));
+    newStr->string = malloc((str->length + 1) * str->stringInfo->size);
+
+    newStr->stringInfo = str->stringInfo;
+    newStr->length = str->length;
+
+    memcpy(newStr->string, str->string, (str->length + 1) * str->stringInfo->size);
+
+    return newStr;
+}
+
+struct String **Split(struct String *str, void *separator)
+{
+    if(!str || !str->string || !separator) return NULL;
+
+    struct String **tokens = (struct String **)calloc(sizeof(struct String *), 100);
+
+    int i, point = 0, n = 0;
+    for(i = 0; i <= str->length; i++)
+    {
+        if(str->stringInfo->Compar(str->string + i * str->stringInfo->size, separator) || i == str->length)
+        {
+            void *stringToken = malloc(str->stringInfo->size * (i - point + 1));
+
+            memcpy(stringToken, str->string + point, (i - point) * str->stringInfo->size);
+            memcpy(stringToken + i - point, str->stringInfo->strEnd, str->stringInfo->size);
+
+            point = i + 1;
+
+            tokens[n] = CreateString(stringToken, str->stringInfo);
+            n++;
+        }
+    }
+
+    return tokens;
+}
+
+int FindSubStr(struct String *str, struct String *subStr)
+{
+    if(!str || !subStr)
+        return -2;
+
+    if(subStr->length == 0 || str->length == 0)
+        return -2;
+
+    if(!str->string || !subStr->string)
+        return -2;
+
+    int i, j, check = 1;
+    for(i = 0; i < str->length; ++i)
+    {
+        for(j = 0; j < subStr->length; ++j)
+        {
+            if(!str->stringInfo->Compar(str->string + (i + j) * str->stringInfo->size, subStr->string + j * str->stringInfo->size))
+            {
+                check = 0;
+                break;
+            }
+        }
+
+        if(check)
+            return i;
+
+        check = 1;
+    }
+
+    return -1;
+} 

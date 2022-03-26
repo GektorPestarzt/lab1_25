@@ -10,6 +10,9 @@ void *GetString(struct String *);
 int PrintString(struct String *);
 void RemoveString(struct String *);
 
+struct String *Copy(struct String *);
 struct String *ConCat(struct String *, struct String *);
 struct String *SubString(struct String *, size_t, size_t);
 struct String *StringTok(struct String *, void *);
+int FindSubStr(struct String *, struct String *);
+struct String **Split(struct String *, void *);
